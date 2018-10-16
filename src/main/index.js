@@ -2,6 +2,8 @@
 
 import { app, BrowserWindow } from 'electron'
 
+import { Utils } from './win-utils'
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -20,9 +22,10 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 563,
+    height: 500,
     useContentSize: true,
-    width: 1000
+    width: 860,
+    frame: false
   })
 
   mainWindow.loadURL(winURL)
@@ -30,6 +33,8 @@ function createWindow () {
   mainWindow.on('closed', () => {
     mainWindow = null
   })
+
+  app.utils = new Utils(mainWindow);
 }
 
 app.on('ready', createWindow)
@@ -45,7 +50,6 @@ app.on('activate', () => {
     createWindow()
   }
 })
-
 /**
  * Auto Updater
  *
