@@ -4,7 +4,6 @@ class Utils{
   }
   //最小化窗口
   min(){
-    console.log(this.win);
     this.win.minimize();
   }
   //最大化窗口

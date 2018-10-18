@@ -4,6 +4,8 @@ import { app, BrowserWindow } from 'electron'
 
 import { Utils } from './win-utils'
 
+import { snippetApi } from '../core/snippet'
+
 /**
  * Set `__static` path to static files in production
  * https://simulatedgreg.gitbooks.io/electron-vue/content/en/using-static-assets.html
@@ -35,6 +37,8 @@ function createWindow () {
   })
 
   app.utils = new Utils(mainWindow);
+
+  app.snippetApi = snippetApi;
 }
 
 app.on('ready', createWindow)
