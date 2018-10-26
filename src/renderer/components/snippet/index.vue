@@ -38,7 +38,14 @@
         </el-col>
         <el-col>
           <div class="code-container" v-if="files.length > 0">
-            <code-card v-for="(file, index) in files" :key="index" :file="file"></code-card>
+            <code-card
+              v-for="(file, index) in files"
+              :key="index" 
+              :code="index"
+              :ref="'code'+index"
+              @changeActive="changeActive"
+              :file="file">
+            </code-card>
           </div>
           <div class="code-container" v-else>
             <h4 style="text-align:center;">还没有添加代码片段</h4>
@@ -49,29 +56,39 @@
   </el-container>
 </template>
 <script>
-  import  CodeCard from './code_card';
-  import { remote } from 'electron';
-  const sapi = remote.app.snippetApi;
+import CodeCard from './code_card'
+import { remote } from 'electron'
+const sapi = remote.app.snippetApi
 
-  export default{
+export default{
     name: 'snippet',
-    components:{
+    components: {
       CodeCard
     },
-    data (){
+    data () {
       return {
         q: '',
-        languages:[],
-        tags:[],
-        files:[]
+        languages: [],
+        tags: [],
+        files: [],
       }
     },
-    created (){
-      let _this = this;
+    methods: {
+      changeActive (obj){
+        const refs = this.$refs;
+        Object.keys(this.$refs).forEach((code, index) => {
+          if(code.indexOf('code')>-1 && code!=='code'+obj.code && obj.isMore){
+            refs[code][0].setMore(!obj.isMore);
+          }
+        })
+      }
+    },
+    created () {
+      let _this = this
       sapi.getSnippetConfig().then((result) => {
-        _this.languages = result.languages;
-        _this.tags = result.tags;
-        _this.files = result.files;
+        _this.languages = result.languages
+        _this.tags = result.tags
+        _this.files = result.files
       })
     }
   }

@@ -4,10 +4,11 @@ const path = require('path')
 const { CM } = require('../app/app_store').default
 
 class SnippetApi {
-  constructor (){
-    this.initFilePath = path.join(__dirname, '/snippet.json');
-    this.snippetFile = CM.get('mainPath') + CM.get('snippet->storage') + '.json';
-    this._init();
+  constructor () {
+    this.initFilePath = path.join(__dirname, '/snippet.json')
+    this.snippetFile = path.join(CM.get('mainPath'), CM.get('snippet->storage') + '.json')
+    console.log(this.snippetFile, '--------------');
+    this._init()
   }
   /**
    * snippet初始化
@@ -16,10 +17,10 @@ class SnippetApi {
    *     如果不存在则新建一个初始文件，初始文件内容。初始文件配置保存在snippet.json
    * @return {[type]} [description]
    */
-  async _init (){
-    if(!sander.existsSync(this.snippetFile)){
+  async _init () {
+    if (!sander.existsSync(this.snippetFile)) {
       let initJson = await sander.readFile(this.initFilePath, {encoding: 'utf8'})
-      sander.writeFile(this.snippetFile, initJson, {encoding: 'utf8'});
+      sander.writeFile(this.snippetFile, initJson, {encoding: 'utf8'})
     }
   }
   /**
@@ -29,16 +30,16 @@ class SnippetApi {
    *   files 代码片段列表
    * @return {Object}
    */
-  async getSnippetConfig (){
-    let fileText =  await sander.readFile(this.snippetFile, { encoding: 'utf8'});
-    let languages = [];
-    let tags = [];
-    let files = [];
-    if(fileText){
-      let fileObj = JSON.parse(fileText);
-      languages = fileObj.languages;
-      tags = fileObj.tags;
-      files = fileObj.files;
+  async getSnippetConfig () {
+    let fileText = await sander.readFile(this.snippetFile, { encoding: 'utf8'})
+    let languages = []
+    let tags = []
+    let files = []
+    if (fileText) {
+      let fileObj = JSON.parse(fileText)
+      languages = fileObj.languages
+      tags = fileObj.tags
+      files = fileObj.files
     }
     return {
       languages,
@@ -47,4 +48,4 @@ class SnippetApi {
     }
   }
 }
-export const snippetApi = new SnippetApi();
+export const snippetApi = new SnippetApi()

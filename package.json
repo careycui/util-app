@@ -57,12 +57,14 @@
   },
   "dependencies": {
     "axios": "^0.16.1",
+    "date-format": "^1.2.0",
     "electron": "^3.0.4",
     "electron-store": "^2.0.0",
     "element-ui": "^2.4.8",
     "lodash": "^4.17.11",
     "sander": "^0.6.0",
     "vue": "^2.3.3",
+    "vue-codemirror": "^4.0.5",
     "vue-electron": "^1.0.6",
     "vue-router": "^2.5.3",
     "vuex": "^2.3.1"

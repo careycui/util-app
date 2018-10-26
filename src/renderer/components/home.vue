@@ -9,17 +9,17 @@
 	</el-container>
 </template>
 <script>
-  import AppHeader from '@/components/common/app_header';
+  import AppHeader from '@/components/common/app_header'
 
-	export default{
+export default{
 	  name: 'home',
-    components:{
+    components: {
       AppHeader
     },
-    mounted (){
-      this.$router.push('/menu');
-    }
-	}
+    mounted () {
+      this.$router.push('/menu')
+  }
+}
 </script>
 <style>
 .el-aside {

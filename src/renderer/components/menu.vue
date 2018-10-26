@@ -17,10 +17,9 @@
   </el-main>
 </template>
 <script>
-
   export default{
     name: 'homeMenu',
-    data (){
+    data () {
       return {
         menuList: [
           {
@@ -45,8 +44,8 @@
       }
     },
     methods: {
-      linkTo (path){
-        this.$router.push(path);
+      linkTo (path) {
+        this.$router.push(path)
       }
     }
   }

@@ -24,7 +24,7 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 560,
+    height: 600,
     useContentSize: true,
     width: 1080,
     frame: false
@@ -36,11 +36,11 @@ function createWindow () {
     mainWindow = null
   })
 
-  app.utils = new Utils(mainWindow);
+  app.utils = new Utils(mainWindow)
 
-  app.snippetApi = snippetApi;
+  app.snippetApi = snippetApi
 
-  require('../core/app/app_store');
+  require('../core/app/app_store')
 }
 
 app.on('ready', createWindow)

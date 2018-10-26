@@ -14,28 +14,28 @@
   </el-row>
 </template>
 <script>
-   import { remote } from 'electron';
-   const appUtils = remote.app.utils;
+   import { remote } from 'electron'
+const appUtils = remote.app.utils
 
-   export default{
-    name: 'appHeader',
-    data() {
-      return {
-        isMax: false
-      }
-    },
-    methods:{
-      minWin (){
-        appUtils.min();
-      },
-      maxWin (){
-        this.isMax = !this.isMax;
-        appUtils.max();
-      },
-      close (){
-        appUtils.close();
-      }
-    }
+export default{
+     name: 'appHeader',
+     data () {
+       return {
+         isMax: false
+       }
+     },
+     methods: {
+       minWin () {
+         appUtils.min()
+   },
+       maxWin () {
+         this.isMax = !this.isMax
+         appUtils.max()
+   },
+       close () {
+         appUtils.close()
+   }
+     }
    }
 </script>
 <style>
