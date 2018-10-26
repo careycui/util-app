@@ -1,3 +1,4 @@
+const { app } = require('electron')
 class Utils{
   constructor(win){
     this.win = win;
@@ -17,7 +18,7 @@ class Utils{
   }
   //关闭窗口
   close(){
-    this.win.close();
+    app.quit();
   }
 }
 export { Utils }

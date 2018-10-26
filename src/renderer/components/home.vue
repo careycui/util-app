@@ -29,7 +29,6 @@
 .el-main {
   height: 100%;
 	color: #333;
-	text-align: center;
 }
 .home{
 	height: 100%;

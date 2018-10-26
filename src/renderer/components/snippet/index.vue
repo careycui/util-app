@@ -22,7 +22,7 @@
     </el-aside>
     <el-main style="background-color: #f1f1f1;">
       <el-row>
-        <el-col>
+        <el-col style="text-align: center;">
           <div class="search-box">
             <el-input
               class="re-br"
@@ -37,10 +37,11 @@
           </div>
         </el-col>
         <el-col>
-          <div class="code-container">
-            <code-card></code-card>
-            <code-card></code-card>
-            <code-card></code-card>
+          <div class="code-container" v-if="files.length > 0">
+            <code-card v-for="(file, index) in files" :key="index" :file="file"></code-card>
+          </div>
+          <div class="code-container" v-else>
+            <h4 style="text-align:center;">还没有添加代码片段</h4>
           </div>
         </el-col>
       </el-row>
@@ -61,25 +62,16 @@
       return {
         q: '',
         languages:[],
-        tags:[]
+        tags:[],
+        files:[]
       }
     },
     created (){
       let _this = this;
-      sapi.getSnippetConfig().then((config) => {
-        let result = JSON.parse(config);
-        result.languages.forEach((la, index) => {
-          _this.languages.push({
-            name: la,
-            count: 0
-          });
-        });
-        result.tags.forEach((tag, index) => {
-          _this.tags.push({
-            name: tag,
-            count: 0
-          });
-        });
+      sapi.getSnippetConfig().then((result) => {
+        _this.languages = result.languages;
+        _this.tags = result.tags;
+        _this.files = result.files;
       })
     }
   }
