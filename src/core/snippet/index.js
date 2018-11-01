@@ -1,13 +1,16 @@
-const sander = require('sander')
+const fs = require('fs')
 const _ = require('lodash')
 const path = require('path')
+const util = require('util')
 const { CM } = require('../app/app_store').default
+
+const readFile = util.promisify(fs.readFile)
+const writeFile = util.promisify(fs.writeFile)
 
 class SnippetApi {
   constructor () {
     this.initFilePath = path.join(__dirname, '/snippet.json')
     this.snippetFile = path.join(CM.get('mainPath'), CM.get('snippet->storage') + '.json')
-    console.log(this.snippetFile, '--------------');
     this._init()
   }
   /**
@@ -18,9 +21,9 @@ class SnippetApi {
    * @return {[type]} [description]
    */
   async _init () {
-    if (!sander.existsSync(this.snippetFile)) {
-      let initJson = await sander.readFile(this.initFilePath, {encoding: 'utf8'})
-      sander.writeFile(this.snippetFile, initJson, {encoding: 'utf8'})
+    if (!fs.existsSync(this.snippetFile)) {
+      let initJson = await readFile(this.initFilePath, {encoding: 'utf8'})
+      writeFile(this.snippetFile, initJson, {encoding: 'utf8'})
     }
   }
   /**
@@ -31,20 +34,58 @@ class SnippetApi {
    * @return {Object}
    */
   async getSnippetConfig () {
-    let fileText = await sander.readFile(this.snippetFile, { encoding: 'utf8'})
+    let fileText = await readFile(this.snippetFile, { encoding: 'utf8'})
     let languages = []
     let tags = []
     let files = []
     if (fileText) {
       let fileObj = JSON.parse(fileText)
-      languages = fileObj.languages
-      tags = fileObj.tags
-      files = fileObj.files
+      languages = this.languages = fileObj.languages
+      tags = this.tags = fileObj.tags
+      files = this.files = fileObj.files
     }
     return {
       languages,
       tags,
       files
+    }
+  }
+
+  async createSnippet (data) {
+    const tags = data.tag;
+    const language = data.language;
+    this.tags.forEach((tag, index) => {
+      let i = -1;
+      tags.some((value, ind) => {
+         if(tag.name.toLowerCase() === value.toLowerCase()){
+          i = ind;
+          return true;
+         }
+         return false;
+      });
+      (i !== -1) && (this.tags[i].count += 1);
+    });
+
+    this.languages.forEach((la, index) => {
+      if(la.name.toLowerCase() === language.toLowerCase()){
+        la.count += 1;
+      }
+    });
+    data.createdAt = Date.parse(new Date());
+    data.updateAt = Date.parse(new Date());
+    data.used = 0;
+    this.files.unshift(data);
+
+    var text = {
+      languages: this.languages,
+      tags: this.tags,
+      files: this.files
+    }
+    try{
+      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'});
+      return text;
+    }catch (err){
+      return err;
     }
   }
 }

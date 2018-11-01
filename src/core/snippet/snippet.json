@@ -1,7 +1,7 @@
 {
   "languages": [{
     "name": "HTML",
-    "count": 1
+    "count": 0
   }, {
     "name": "Javascript",
     "count": 0
@@ -11,28 +11,10 @@
   }],
   "tags": [{
     "name": "Vue",
-    "count": 1
+    "count": 0
   }, {
     "name": "React",
     "count": 0
   }],
-  "files": [{
-    "name": "ceshi",
-    "createdAt": 1540462241000,
-    "updateAt": 1540462241000,
-    "used": 10,
-    "desc": "desc desc desc desc",
-    "tag": ["Vue", "JS"],
-    "language": "HTML",
-    "value": "ceshi ceshi ceshi ceshi ceshi"
-  },{
-    "name": "测试呀测试呀",
-    "createdAt": 1540462211000,
-    "updateAt": 1540462211000,
-    "used": 5,
-    "desc": "这是我的测试呀，这是我的测试",
-    "tag": ["Vue", "template"],
-    "language": "JavaScript",
-    "value": "<template><test-api></test-api></template><script>export default{name:'TestApi'}</script>"
-  }]
+  "files": []
 }

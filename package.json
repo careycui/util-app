@@ -58,7 +58,7 @@
   "dependencies": {
     "axios": "^0.16.1",
     "date-format": "^1.2.0",
-    "electron": "^3.0.4",
+    "electron": "^3.0.6",
     "electron-store": "^2.0.0",
     "element-ui": "^2.4.8",
     "lodash": "^4.17.11",
