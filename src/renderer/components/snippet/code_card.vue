@@ -11,7 +11,7 @@
       <el-col :span="6" class="code-card__btns">
         <el-button type="text" icon="web-icon w-icon-copy" style="padding: 10px 5px;"></el-button>
         <el-button type="text" icon="el-icon-edit" style="padding: 10px 5px;"></el-button>
-        <el-button type="text" icon="el-icon-delete" style="padding: 10px 5px;"></el-button>
+        <el-button type="text" icon="el-icon-delete" style="padding: 10px 5px;" @click="del()"></el-button>
         <el-button type="text" icon="web-icon w-icon-more" style="padding: 10px 5px;" @click="checkMore()"></el-button>
       </el-col>
       <el-col :span="24" class="code-card__tags bb1">
@@ -47,6 +47,8 @@
 </template>
 <script>
   import format from 'date-format'
+  import { remote } from 'electron'
+  const sapi = remote.app.snippetApi
 
   export default{
     name: 'codeCard',
@@ -92,6 +94,9 @@
       checkMore () {
         this.isMore = !this.isMore;
         this.$emit('changeActive', {code:this.code,isMore:this.isMore});
+      },
+      del (){
+        this.$emit('deleteFn', this.code);
       }
     }
   }

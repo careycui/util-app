@@ -88,5 +88,25 @@ class SnippetApi {
       return err;
     }
   }
+
+  async delSnippet (code){
+    if(!this.files[code]){
+      return false;
+    }
+    this.files.splice(code, 1);
+
+    var text = {
+      languages: this.languages,
+      tags: this.tags,
+      files: this.files
+    }
+    
+    try{
+      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'});
+      return text;
+    }catch(err){
+      return err;
+    }
+  }
 }
 export const snippetApi = new SnippetApi()

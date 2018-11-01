@@ -44,6 +44,7 @@
               :code="index"
               :ref="'code'+index"
               @changeActive="changeActive"
+              @deleteFn="del"
               :file="file">
             </code-card>
           </div>
@@ -184,6 +185,32 @@ export default{
           Message({
             showClose: true,
             message: '保存失败',
+            type: 'error'
+          });
+        });
+      },
+      del (code){
+        var _this = this;
+        _this.$confirm('此操作将永久删除该片段，确认删除该片段吗？', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          sapi.delSnippet(code).then((result) => {
+            _this.languages = result.languages
+            _this.tags = result.tags
+            _this.files = result.files
+          }).catch((err) => {
+            Message({
+              showClose: true,
+              message: '操作失败',
+              type: 'error'
+            });
+          });
+        }).catch((err) => {
+          Message({
+            showClose: true,
+            message: '操作失败',
             type: 'error'
           });
         });
