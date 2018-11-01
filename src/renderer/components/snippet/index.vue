@@ -44,7 +44,7 @@
               :code="index"
               :ref="'code'+index"
               @changeActive="changeActive"
-              @deleteFn="del"
+              @deleteFn="delFn"
               :file="file">
             </code-card>
           </div>
@@ -53,81 +53,81 @@
           </div>
         </el-col>
       </el-row>
-      <el-dialog
-        title="新建"
-        :visible.sync="dialogVisible"
-        :modal-append-to-body="false"
-        :close-on-click-modal="false"
-        :show-close="false"
-        width="60%">
-          <el-form
-            label-position="left"
-            :model="snippetForm"
-            size="mini"
-            label-width="100px">
-            <el-form-item label="名称">
-              <el-input v-model="snippetForm.name" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="编程语言">
-              <el-select v-model="snippetForm.language" placeholder="请选择">
-                <el-option
-                  v-for="(item,index) in languages"
-                  :key="index"
-                  :label="item.name"
-                  :value="item.name">
-                </el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="标签">
-                <el-tag
-                  :key="index"
-                  size="mini"
-                  v-for="(tag, index) in snippetForm.tag"
-                  style="margin:0 5px;"
-                  type="info">
-                  {{tag}}
-                </el-tag>
-              <el-button type="plain" icon="el-icon-plus" @click="tagVisible=true"></el-button>
-            </el-form-item>
-            <el-form-item label="描述">
-              <el-input type="textarea" v-model="snippetForm.desc" autocomplete="off"></el-input>
-            </el-form-item>
-            <el-form-item label="Code">
-              <codemirror v-model="snippetForm.value" :options="codeOptions"></codemirror>
-            </el-form-item>
-          </el-form>
-          <el-dialog
-            title="标签"
-            :visible.sync="tagVisible"
-            :append-to-body="true"
-            :close-on-click-modal="false"
-            :show-close="false"
-            width="40%">
-              <el-col>
-                <el-checkbox-group v-model="snippetForm.tag">
-                  <el-checkbox
-                    v-for="(tag,index) in tags"
-                    :key="index"
-                    :label="tag.name"
-                    border
-                    size="mini">
-                  </el-checkbox>
-                </el-checkbox-group>
-              </el-col>
-              <div slot="footer" class="dialog-footer">
-                <el-button @click="tagVisible = false" size="small">关闭</el-button>
-              </div>
-          </el-dialog>
-          <div slot="footer" class="dialog-footer">
-            <el-button @click="dialogVisible = false" size="small">取 消</el-button>
-            <el-button type="primary" @click="create" size="small">确定</el-button>
-          </div>
-      </el-dialog>
     </el-main>
+    <el-dialog
+      title="新建"
+      :visible.sync="dialogVisible"
+      :modal-append-to-body="false"
+      :close-on-click-modal="false"
+      :show-close="false"
+      width="60%">
+        <el-form
+          label-position="left"
+          :model="snippetForm"
+          size="mini"
+          label-width="100px">
+          <el-form-item label="名称">
+            <el-input v-model="snippetForm.name" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="编程语言">
+            <el-select v-model="snippetForm.language" placeholder="请选择">
+              <el-option
+                v-for="(item,index) in languages"
+                :key="index"
+                :label="item.name"
+                :value="item.name">
+              </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="标签">
+              <el-tag
+                :key="index"
+                size="mini"
+                v-for="(tag, index) in snippetForm.tag"
+                style="margin:0 5px;"
+                type="info">
+                {{tag}}
+              </el-tag>
+            <el-button type="plain" icon="el-icon-plus" @click="tagVisible=true"></el-button>
+          </el-form-item>
+          <el-form-item label="描述">
+            <el-input type="textarea" v-model="snippetForm.desc" autocomplete="off"></el-input>
+          </el-form-item>
+          <el-form-item label="Code">
+            <codemirror v-model="snippetForm.value" :options="codeOptions"></codemirror>
+          </el-form-item>
+        </el-form>
+        <el-dialog
+          title="标签"
+          :visible.sync="tagVisible"
+          :append-to-body="true"
+          :close-on-click-modal="false"
+          :show-close="false"
+          width="40%">
+            <el-col>
+              <el-checkbox-group v-model="snippetForm.tag">
+                <el-checkbox
+                  v-for="(tag,index) in tags"
+                  :key="index"
+                  :label="tag.name"
+                  border
+                  size="mini">
+                </el-checkbox>
+              </el-checkbox-group>
+            </el-col>
+            <div slot="footer" class="dialog-footer">
+              <el-button @click="tagVisible = false" size="small">关闭</el-button>
+            </div>
+        </el-dialog>
+        <div slot="footer" class="dialog-footer">
+          <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+          <el-button type="primary" @click="create" size="small">确定</el-button>
+        </div>
+    </el-dialog>
   </el-container>
 </template>
 <script>
-import { Message } from 'element-ui';
+import { Message, MessageBox } from 'element-ui';
 import CodeCard from './code_card'
 import { remote } from 'electron'
 const sapi = remote.app.snippetApi
@@ -181,6 +181,13 @@ export default{
           _this.tags = result.tags
           _this.files = result.files
           _this.dialogVisible = false;
+          _this.snippetForm = {
+                      name: '',
+                      language: '',
+                      tag: [],
+                      desc:'',
+                      value: ''
+                    }
         }).catch((err) => {
           Message({
             showClose: true,
@@ -189,9 +196,9 @@ export default{
           });
         });
       },
-      del (code){
+      delFn (code){
         var _this = this;
-        _this.$confirm('此操作将永久删除该片段，确认删除该片段吗？', '提示', {
+        MessageBox.confirm('此操作将永久删除该片段，确认删除该片段吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
           type: 'warning'
@@ -208,11 +215,6 @@ export default{
             });
           });
         }).catch((err) => {
-          Message({
-            showClose: true,
-            message: '操作失败',
-            type: 'error'
-          });
         });
       }
     },

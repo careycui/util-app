@@ -63,7 +63,7 @@ class SnippetApi {
          }
          return false;
       });
-      (i !== -1) && (this.tags[i].count += 1);
+      (i !== -1) && (tag.count += 1);
     });
 
     this.languages.forEach((la, index) => {
@@ -93,14 +93,32 @@ class SnippetApi {
     if(!this.files[code]){
       return false;
     }
+    const file = this.files[code];
     this.files.splice(code, 1);
+    this.tags.forEach((tag, index) => {
+      let i = -1;
+      file.tag.some((value, ind) => {
+        if(tag.name.toLowerCase() === value.toLowerCase()){
+          i = ind;
+          return true;
+        }
+        return false;
+      });
+      (i !== -1) && (tag.count -= 1);
+    });
+
+    this.languages.forEach((la, index) => {
+      if(la.name.toLowerCase() === file.language.toLowerCase()){
+        la.count -= 1;
+      }
+    });
 
     var text = {
       languages: this.languages,
       tags: this.tags,
       files: this.files
     }
-    
+
     try{
       await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'});
       return text;
