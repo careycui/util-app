@@ -56,45 +56,45 @@
         requied: true,
         default: {}
       },
-      code: [String, Number],
+      code: [String, Number]
     },
     data () {
       return {
         isMore: false,
-        options:{
+        options: {
           tabSize: 4,
-          lineNumbers: true,     // 显示行数
-          indentUnit: 4,         // 缩进单位为4
+          lineNumbers: true, // 显示行数
+          indentUnit: 4, // 缩进单位为4
           styleActiveLine: true, // 当前行背景高亮
-          matchBrackets: true,   // 括号匹配
-          lineWrapping: true,    // 自动换行
+          matchBrackets: true, // 括号匹配
+          lineWrapping: true, // 自动换行
           line: true,
           mode: 'text/javascript',
           theme: 'monokai'
         }
       }
     },
-    computed:{
+    computed: {
       icon () {
-        return 'web-icon w-icon-' + this.file.language.toLowerCase();
+        return 'web-icon w-icon-' + this.file.language.toLowerCase()
       },
-      createAt (){
-        return format('yyyy/MM/dd hh:mm', new Date(this.file.createdAt));
+      createAt () {
+        return format('yyyy/MM/dd hh:mm', new Date(this.file.createdAt))
       },
-      updateAt (){
-        return format('yyyy/MM/dd hh:mm', new Date(this.file.updateAt));
+      updateAt () {
+        return format('yyyy/MM/dd hh:mm', new Date(this.file.updateAt))
       }
     },
     methods: {
-      setMore (isMore){
-        this.isMore = isMore; 
+      setMore (isMore) {
+        this.isMore = isMore
       },
       checkMore () {
-        this.isMore = !this.isMore;
-        this.$emit('changeActive', {code:this.code,isMore:this.isMore});
+        this.isMore = !this.isMore
+        this.$emit('changeActive', {code: this.code, isMore: this.isMore})
       },
-      deleteFn (){
-        this.$emit('deleteFn', this.code);
+      deleteFn () {
+        this.$emit('deleteFn', this.code)
       }
     }
   }

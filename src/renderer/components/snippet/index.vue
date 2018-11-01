@@ -127,106 +127,106 @@
   </el-container>
 </template>
 <script>
-import { Message, MessageBox } from 'element-ui';
+import { Message, MessageBox } from 'element-ui'
 import CodeCard from './code_card'
 import { remote } from 'electron'
 const sapi = remote.app.snippetApi
 
 export default{
-    name: 'snippet',
-    components: {
-      CodeCard
-    },
-    data () {
-      return {
-        q: '',
-        languages: [],
-        tags: [],
-        files: [],
-        dialogVisible: false,
-        codeOptions:{
-          tabSize: 4,
-          lineNumbers: true,     // 显示行数
-          indentUnit: 4,         // 缩进单位为4
-          styleActiveLine: true, // 当前行背景高亮
-          matchBrackets: true,   // 括号匹配
-          lineWrapping: true,    // 自动换行
-          line: true,
-          mode: 'text/javascript',
-          theme: 'monokai'
-        },
-        snippetForm:{
-          name: '',
-          language: '',
-          tag: [],
-          desc:'',
-          value: ''
-        },
-        tagVisible: false
-      }
-    },
-    methods: {
-      changeActive (obj){
-        const refs = this.$refs;
-        Object.keys(this.$refs).forEach((code, index) => {
-          if(code.indexOf('code')>-1 && code!=='code'+obj.code && obj.isMore){
-            refs[code][0].setMore(!obj.isMore);
-          }
-        })
+  name: 'snippet',
+  components: {
+    CodeCard
+  },
+  data () {
+    return {
+      q: '',
+      languages: [],
+      tags: [],
+      files: [],
+      dialogVisible: false,
+      codeOptions: {
+        tabSize: 4,
+        lineNumbers: true, // 显示行数
+        indentUnit: 4, // 缩进单位为4
+        styleActiveLine: true, // 当前行背景高亮
+        matchBrackets: true, // 括号匹配
+        lineWrapping: true, // 自动换行
+        line: true,
+        mode: 'text/javascript',
+        theme: 'monokai'
       },
-      create (){
-        var _this = this;
-        sapi.createSnippet(this.snippetForm).then((result) => {
-          _this.languages = result.languages
-          _this.tags = result.tags
-          _this.files = result.files
-          _this.dialogVisible = false;
-          _this.snippetForm = {
-                      name: '',
-                      language: '',
-                      tag: [],
-                      desc:'',
-                      value: ''
-                    }
-        }).catch((err) => {
-          Message({
-            showClose: true,
-            message: '保存失败',
-            type: 'error'
-          });
-        });
+      snippetForm: {
+        name: '',
+        language: '',
+        tag: [],
+        desc: '',
+        value: ''
       },
-      delFn (code){
-        var _this = this;
-        MessageBox.confirm('此操作将永久删除该片段，确认删除该片段吗？', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          sapi.delSnippet(code).then((result) => {
-            _this.languages = result.languages
-            _this.tags = result.tags
-            _this.files = result.files
-          }).catch((err) => {
-            Message({
-              showClose: true,
-              message: '操作失败',
-              type: 'error'
-            });
-          });
-        }).catch((err) => {
-        });
-      }
+      tagVisible: false
+    }
+  },
+  methods: {
+    changeActive (obj) {
+      const refs = this.$refs
+      Object.keys(this.$refs).forEach((code, index) => {
+        if (code.indexOf('code') > -1 && code !== 'code' + obj.code && obj.isMore) {
+          refs[code][0].setMore(!obj.isMore)
+        }
+      })
     },
-    created () {
-      let _this = this;
-      sapi.getSnippetConfig().then((result) => {
+    create () {
+      var _this = this
+      sapi.createSnippet(this.snippetForm).then((result) => {
         _this.languages = result.languages
         _this.tags = result.tags
         _this.files = result.files
+        _this.dialogVisible = false
+        _this.snippetForm = {
+          name: '',
+          language: '',
+          tag: [],
+          desc: '',
+          value: ''
+        }
+      }).catch((err) => {
+        Message({
+          showClose: true,
+          message: '保存失败',
+          type: 'error'
+        })
+      })
+    },
+    delFn (code) {
+      var _this = this
+      MessageBox.confirm('此操作将永久删除该片段，确认删除该片段吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        sapi.delSnippet(code).then((result) => {
+          _this.languages = result.languages
+          _this.tags = result.tags
+          _this.files = result.files
+        }).catch((err) => {
+          Message({
+            showClose: true,
+            message: '操作失败',
+            type: 'error'
+          })
+        })
+      }).catch((err) => {
       })
     }
+  },
+  created () {
+    let _this = this
+    sapi.getSnippetConfig().then((result) => {
+      _this.languages = result.languages
+      _this.tags = result.tags
+      _this.files = result.files
+    })
   }
+}
 </script>
 <style>
 .el-aside{

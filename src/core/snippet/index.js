@@ -52,66 +52,66 @@ class SnippetApi {
   }
 
   async createSnippet (data) {
-    const tags = data.tag;
-    const language = data.language;
+    const tags = data.tag
+    const language = data.language
     this.tags.forEach((tag, index) => {
-      let i = -1;
+      let i = -1
       tags.some((value, ind) => {
-         if(tag.name.toLowerCase() === value.toLowerCase()){
-          i = ind;
-          return true;
-         }
-         return false;
+        if (tag.name.toLowerCase() === value.toLowerCase()) {
+          i = ind
+          return true
+        }
+        return false
       });
-      (i !== -1) && (tag.count += 1);
-    });
+      (i !== -1) && (tag.count += 1)
+    })
 
     this.languages.forEach((la, index) => {
-      if(la.name.toLowerCase() === language.toLowerCase()){
-        la.count += 1;
+      if (la.name.toLowerCase() === language.toLowerCase()) {
+        la.count += 1
       }
-    });
-    data.createdAt = Date.parse(new Date());
-    data.updateAt = Date.parse(new Date());
-    data.used = 0;
-    this.files.unshift(data);
+    })
+    data.createdAt = Date.parse(new Date())
+    data.updateAt = Date.parse(new Date())
+    data.used = 0
+    this.files.unshift(data)
 
     var text = {
       languages: this.languages,
       tags: this.tags,
       files: this.files
     }
-    try{
-      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'});
-      return text;
-    }catch (err){
-      return err;
+    try {
+      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'})
+      return text
+    } catch (err) {
+      return err
     }
   }
 
-  async delSnippet (code){
-    if(!this.files[code]){
-      return false;
+  async delSnippet (code) {
+    if (!this.files[code]) {
+      return false
     }
-    const file = this.files[code];
-    this.files.splice(code, 1);
+    const file = this.files[code]
+    this.files.splice(code, 1)
     this.tags.forEach((tag, index) => {
-      let i = -1;
+      let i = -1
       file.tag.some((value, ind) => {
-        if(tag.name.toLowerCase() === value.toLowerCase()){
-          i = ind;
-          return true;
+        if (tag.name.toLowerCase() === value.toLowerCase()) {
+          i = ind
+          return true
         }
-        return false;
+        return false
       });
-      (i !== -1) && (tag.count -= 1);
-    });
+      (i !== -1) && (tag.count -= 1)
+    })
 
     this.languages.forEach((la, index) => {
-      if(la.name.toLowerCase() === file.language.toLowerCase()){
-        la.count -= 1;
+      if (la.name.toLowerCase() === file.language.toLowerCase()) {
+        la.count -= 1
       }
-    });
+    })
 
     var text = {
       languages: this.languages,
@@ -119,11 +119,11 @@ class SnippetApi {
       files: this.files
     }
 
-    try{
-      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'});
-      return text;
-    }catch(err){
-      return err;
+    try {
+      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'})
+      return text
+    } catch (err) {
+      return err
     }
   }
 }
