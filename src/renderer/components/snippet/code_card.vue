@@ -9,9 +9,9 @@
         </h4>
       </el-col>
       <el-col :span="6" class="code-card__btns">
-        <el-button type="text" icon="web-icon w-icon-copy" style="padding: 10px 5px;"></el-button>
-        <el-button type="text" icon="el-icon-edit" style="padding: 10px 5px;"></el-button>
-        <el-button type="text" icon="el-icon-delete" style="padding: 10px 5px;" @click.stop="deleteFn()"></el-button>
+        <el-button type="text" icon="web-icon w-icon-copy" style="padding: 10px 5px;" @click="copy()"></el-button>
+        <el-button type="text" icon="el-icon-edit" style="padding: 10px 5px;" @click="edit()"></el-button>
+        <el-button type="text" icon="el-icon-delete" style="padding: 10px 5px;" @click="deleteFn()"></el-button>
         <el-button type="text" icon="web-icon w-icon-more" style="padding: 10px 5px;" @click="checkMore()"></el-button>
       </el-col>
       <el-col :span="24" class="code-card__tags bb1">
@@ -95,6 +95,12 @@
       },
       deleteFn () {
         this.$emit('deleteFn', this.code)
+      },
+      edit (){
+        this.$emit('editFn', this.code);
+      },
+      copy (){
+        this.$emit('copySnippet', this.code);
       }
     }
   }

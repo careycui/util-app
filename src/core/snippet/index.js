@@ -50,6 +50,28 @@ class SnippetApi {
       files
     }
   }
+  async reWriteFile (){
+    let result = {
+      status: true,
+      data: '',
+      msg: '保存成功'
+    }
+    let text = {
+      languages: this.languages,
+      tags: this.tags,
+      files: this.files
+    }
+
+    try {
+      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'})
+      result.data = text;
+      return result
+    } catch (err) {
+      result.msg = '保存失败'
+      result.status = false
+      return result
+    }
+  }
 
   async createSnippet (data) {
     const tags = data.tag
@@ -76,17 +98,19 @@ class SnippetApi {
     data.used = 0
     this.files.unshift(data)
 
-    var text = {
-      languages: this.languages,
-      tags: this.tags,
-      files: this.files
-    }
-    try {
-      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'})
-      return text
-    } catch (err) {
-      return err
-    }
+    let result = await this.reWriteFile()
+    return result
+  }
+
+  async updateSnippet (data) {
+    let code = data.code;
+    delete data.code;
+    data.updateAt = Date.parse(new Date());
+    let tmp = this.files[code];
+    this.files[code] = _.merge({}, tmp, data);
+
+    let result = await this.reWriteFile();
+    return result
   }
 
   async delSnippet (code) {
@@ -113,18 +137,43 @@ class SnippetApi {
       }
     })
 
-    var text = {
-      languages: this.languages,
-      tags: this.tags,
-      files: this.files
-    }
+    let result = await this.reWriteFile()
+    console.log(result);
+    return result
+  }
 
-    try {
-      await writeFile(this.snippetFile, JSON.stringify(text), {encoding: 'utf8'})
-      return text
-    } catch (err) {
-      return err
+  async addLanguage (language){
+    if(!language){
+      return;
     }
+    this.languages.unshift({
+      name: language,
+      count: 0
+    });
+    let result = await this.reWriteFile();
+    return result;
+  }
+  async addTag (tag){
+    if(!tag){
+      return;
+    }
+    this.tags.unshift({
+      name: tag,
+      count: 0
+    });
+    let result = await this.reWriteFile();
+    return result;
+  }
+  findByQ (q){
+    return new Promise((resolve, reject) => {
+      let result = this.files.filter((file, i) => {
+        return (file.name.indexOf(q) > -1)
+      });
+      resolve({
+        status: true,
+        data: result
+      });
+    })
   }
 }
 export const snippetApi = new SnippetApi()

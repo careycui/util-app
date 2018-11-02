@@ -2,7 +2,10 @@
   <el-container>
     <el-aside width="200px">
       <div class="languages">
-        <h4 class="menu-title">语言类别</h4>
+        <h4 class="menu-title">
+          语言类别
+          <el-button type="text" icon="el-icon-plus" size="mini" @click="addLanguage" v-if="languages.length<20"></el-button>
+        </h4>
         <ul class="num-menus">
           <li class="num-menus__item" v-for="(la, index) in languages" :key="index">
             <span v-text="la.name"></span>
@@ -11,7 +14,10 @@
         </ul>
       </div>
       <div class="tags">
-        <h4 class="menu-title">标签</h4>
+        <h4 class="menu-title">
+          标签
+          <el-button type="text" icon="el-icon-plus" size="mini" @click="addTag" v-if="tags.length<20"></el-button>
+        </h4>
         <ul class="num-menus">
           <li class="num-menus__item" v-for="(tag, index) in tags" :key="index">
             <span v-text="tag.name"></span>
@@ -27,8 +33,9 @@
             <el-input
               class="re-br"
               size="small"
-              placeholder="请输入内容"
+              placeholder="请输入标题关键字"
               prefix-icon="el-icon-search"
+              @keyup.enter.native="searchFn"
               v-model="q">
             </el-input>
           </div>
@@ -45,6 +52,8 @@
               :ref="'code'+index"
               @changeActive="changeActive"
               @deleteFn="delFn"
+              @editFn="editFn"
+              @copySnippet="copySnippet"
               :file="file">
             </code-card>
           </div>
@@ -120,7 +129,7 @@
             </div>
         </el-dialog>
         <div slot="footer" class="dialog-footer">
-          <el-button @click="dialogVisible = false" size="small">取 消</el-button>
+          <el-button @click="closeDialog" size="small">取 消</el-button>
           <el-button type="primary" @click="create" size="small">确定</el-button>
         </div>
     </el-dialog>
@@ -129,7 +138,7 @@
 <script>
 import { Message, MessageBox } from 'element-ui'
 import CodeCard from './code_card'
-import { remote } from 'electron'
+import { remote, clipboard } from 'electron'
 const sapi = remote.app.snippetApi
 
 export default{
@@ -156,6 +165,7 @@ export default{
         theme: 'monokai'
       },
       snippetForm: {
+        code: '',
         name: '',
         language: '',
         tag: [],
@@ -174,27 +184,125 @@ export default{
         }
       })
     },
-    create () {
-      var _this = this
-      sapi.createSnippet(this.snippetForm).then((result) => {
-        _this.languages = result.languages
-        _this.tags = result.tags
-        _this.files = result.files
-        _this.dialogVisible = false
-        _this.snippetForm = {
-          name: '',
-          language: '',
-          tag: [],
-          desc: '',
-          value: ''
-        }
-      }).catch((err) => {
-        Message({
-          showClose: true,
-          message: '保存失败',
-          type: 'error'
+    closeDialog (){
+      this.snippetForm = {
+        code: '',
+        name: '',
+        language: '',
+        tag: [],
+        desc: '',
+        value: ''
+      };
+      this.dialogVisible = false;
+      this.isEdit = false;
+    },
+    addLanguage (){
+      var _this = this;
+      this.$prompt('输入新的编程语言', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^\w+$/,
+        inputErrorMessage: '不可为空'
+      }).then(({ value }) => {
+        sapi.addLanguage(value).then((result) => {
+          if(result.status){
+            _this.languages = result.data.languages;
+          }
+        }).catch((err) => {
+          Message({
+            showClose: true,
+            message: '保存失败',
+            type: 'error'
+          })
         })
-      })
+      }).catch(() => {
+      });
+    },
+    addTag (){
+      var _this = this;
+      this.$prompt('输入新的标签', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPattern: /^\w+$/,
+        inputErrorMessage: '不可为空'
+      }).then(({ value }) => {
+        sapi.addTag(value).then((result) => {
+          if(result.status){
+            _this.tags = result.data.tags;
+          }
+        }).catch((err) => {
+          Message({
+            showClose: true,
+            message: '保存失败',
+            type: 'error'
+          })
+        })
+      }).catch(() => {
+      });
+    },
+    create () {
+      var _this = this;
+      if(this.snippetForm.code || this.snippetForm.code == 0){
+        sapi.updateSnippet(this.snippetForm).then((result) => {
+          if(result.status){
+            let data = result.data;
+            _this.files = data.files;
+            _this.dialogVisible = false;
+            _this.snippetForm = {
+              code: '',
+              name: '',
+              language: '',
+              tag: [],
+              desc: '',
+              value: ''
+            };
+
+          }else{
+            Message({
+              showClose: true,
+              message: '更新失败',
+              type: 'error'
+            });
+          }
+        }).catch((err) => {
+          Message({
+            showClose: true,
+            message: '更新失败',
+            type: 'error'
+          });
+        })
+      }else{
+        sapi.createSnippet(this.snippetForm).then((result) => {
+          if(result.status){
+            let data = result.data
+            _this.languages = data.languages
+            _this.tags = data.tags
+            _this.files = data.files
+            _this.dialogVisible = false
+            _this.snippetForm = {
+              code: '',
+              name: '',
+              language: '',
+              tag: [],
+              desc: '',
+              value: ''
+            }
+
+          }else{
+            Message({
+              showClose: true,
+              message: '保存失败',
+              type: 'error'
+            })
+          }
+        }).catch((err) => {
+          Message({
+            showClose: true,
+            message: '保存失败',
+            type: 'error'
+          })
+        })
+      }
     },
     delFn (code) {
       var _this = this
@@ -204,9 +312,18 @@ export default{
         type: 'warning'
       }).then(() => {
         sapi.delSnippet(code).then((result) => {
-          _this.languages = result.languages
-          _this.tags = result.tags
-          _this.files = result.files
+          if(result.status){
+            let data = result.data
+            _this.languages = data.languages
+            _this.tags = data.tags
+            _this.files = data.files
+          }else{
+            Message({
+              showClose: true,
+              message: '操作失败',
+              type: 'error'
+            })
+          }
         }).catch((err) => {
           Message({
             showClose: true,
@@ -216,6 +333,43 @@ export default{
         })
       }).catch((err) => {
       })
+    },
+    editFn (code){
+      let file = this.files[code];
+      if(!file){
+        return;
+      }
+      this.snippetForm.name = file.name;
+      this.snippetForm.language = file.language;
+      this.snippetForm.tag = file.tag;
+      this.snippetForm.desc = file.desc;
+      this.snippetForm.value = file.value;
+      this.snippetForm.code = code;
+      this.dialogVisible = true;
+    },
+    searchFn (){
+      let _this = this;
+      sapi.findByQ(this.q).then((result) => {
+        if(result.status){
+          _this.files = result.data;
+        }
+      }).catch((err) => {
+        Message({
+          showClose: true,
+          message: '查询失败',
+          type: 'error'
+        })
+      });
+    },
+    copySnippet (code){
+      let file = this.files[code];
+      clipboard.writeText(file.value);
+      this.$message({
+        message: '已复制到粘贴板',
+        type: 'success',
+        duration: 2000,
+        showClose: true
+      });
     }
   },
   created () {
