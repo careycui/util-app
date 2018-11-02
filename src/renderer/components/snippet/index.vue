@@ -1,6 +1,9 @@
 <template>
   <el-container>
     <el-aside width="200px">
+      <div class="back-home">
+        <el-button type="text" icon="el-icon-back" class="block-btn" @click="$router.push('/menu')"></el-button>
+      </div>
       <div class="languages">
         <h4 class="menu-title">
           语言类别
