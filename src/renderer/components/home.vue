@@ -27,10 +27,14 @@ export default{
 }
 
 .el-main {
-  height: 100%;
 	color: #333;
 }
 .home{
 	height: 100%;
+}
+.block-btn{
+  display: block;
+  width: 100%;
+  text-align: center;
 }
 </style>
